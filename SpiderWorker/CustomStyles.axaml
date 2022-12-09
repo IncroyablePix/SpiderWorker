@@ -1,0 +1,24 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+    <Border Padding="20">
+        <Button Classes="Large" Content="Hey hey hey!"/>
+    </Border>
+    </Design.PreviewWith>
+    <Style Selector="Button.Large">
+        <Setter Property="Margin" Value="0 5"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Background" Value="#00000000"/>
+        <Setter Property="Foreground" Value="LightSkyBlue"/>
+        <Setter Property="BorderBrush" Value="LightSkyBlue"/>
+    </Style>
+    <Style Selector="Button.Large:hover">
+        <Setter Property="Margin" Value="0 5"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="FontSize" Value="18"/>
+      <Setter Property="Background" Value="#00000000"/>
+      <Setter Property="Foreground" Value="LightCoral"/>
+      <Setter Property="BorderBrush" Value="LightCoral"/>
+    </Style>
+</Styles>

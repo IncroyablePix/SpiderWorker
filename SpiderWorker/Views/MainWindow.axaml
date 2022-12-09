@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:app="clr-namespace:SpiderWorker"
+        xmlns:rxui="clr-namespace:Avalonia.ReactiveUI;assembly=Avalonia.ReactiveUI"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SpiderWorker.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="SpiderWorker.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="SpiderWorker">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <DockPanel LastChildFill="True" Margin="5">
+        <Grid DockPanel.Dock="Left" Width="150" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+          <Button HorizontalAlignment="Stretch" Classes="Large" Grid.Column="0" IsEnabled="True" Content="DNS" Command="{Binding SetDNSMode}" Margin="0,0,0,5"/>
+        </Grid>
+
+        <rxui:RoutedViewHost Grid.Row="0" Router="{Binding Router}">
+            <rxui:RoutedViewHost.DefaultContent>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
+                    Welcome to SpiderWorker
+                </TextBlock>
+            </rxui:RoutedViewHost.DefaultContent>
+
+            <rxui:RoutedViewHost.ViewLocator>
+                <app:AppViewLocator />
+            </rxui:RoutedViewHost.ViewLocator>
+        </rxui:RoutedViewHost>
+    
+  </DockPanel>
+    
+
+</Window>
