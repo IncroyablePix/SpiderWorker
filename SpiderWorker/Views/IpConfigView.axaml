@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:SpiderWorker.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SpiderWorker.Views.IpConfigView">
+  
+  <Design.DataContext>
+    <vm:IpConfigViewModel/>
+  </Design.DataContext>
+  
+  <StackPanel Orientation="Vertical">
+    <ComboBox
+        Items="{Binding NetworkInterfaces}"
+        HorizontalAlignment="Stretch"
+        SelectedIndex="0"
+        SelectedItem="{Binding SelectedNetworkInterface, Mode=TwoWay}">
+      >
+      <ComboBox.ItemTemplate>
+        <DataTemplate>
+          <ComboBoxItem Foreground="Black" Content="{Binding Name}" Focusable="True" />
+        </DataTemplate>
+      </ComboBox.ItemTemplate>
+    </ComboBox>
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition/>
+        <RowDefinition/>
+        <RowDefinition/>
+        <RowDefinition/>
+        <RowDefinition/>
+        <RowDefinition/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">IPv4</TextBlock>
+      <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Subnet mask</TextBlock>
+      <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Default gateway</TextBlock>
+      <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">Preferred DNS server</TextBlock>
+      <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Alternate DNS server</TextBlock>
+      <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center">DHCP enabled</TextBlock>
+
+      <TextBox Grid.Row="0" Grid.Column="1" Foreground="Black" Text="{Binding IPv4Address}" IsEnabled="{Binding IsDhcpDisabled}"/>
+      <TextBox Grid.Row="1" Grid.Column="1" Foreground="Black" Text="{Binding SubnetMask}" IsEnabled="{Binding IsDhcpDisabled}"/>
+      <TextBox Grid.Row="2" Grid.Column="1" Foreground="Black" Text="{Binding DefaultGateway}" IsEnabled="{Binding IsDhcpDisabled}"/>
+      <TextBox Grid.Row="3" Grid.Column="1" Foreground="Black" Text="{Binding PreferredDNS}"/>
+      <TextBox Grid.Row="4" Grid.Column="1" Foreground="Black" Text="{Binding AlternateDNS}"/>
+      <CheckBox Grid.Row="5" Grid.Column="1" Foreground="Black" IsChecked="{Binding IsDhcpEnabled}"/>
+    </Grid>
+
+    <Button HorizontalAlignment="Stretch" Classes="Large" IsEnabled="True" Content="Apply" Command="{Binding ApplyIpConfig}" Margin="0,0,0,5"/>
+  </StackPanel>
+</UserControl>

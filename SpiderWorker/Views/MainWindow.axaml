@@ -16,14 +16,16 @@
 
     <DockPanel LastChildFill="True" Margin="5">
         <Grid DockPanel.Dock="Left" Width="150" VerticalAlignment="Top">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition />
+              <RowDefinition />
+            </Grid.RowDefinitions>
 
-          <Button HorizontalAlignment="Stretch" Classes="Large" Grid.Column="0" IsEnabled="True" Content="DNS" Command="{Binding SetDNSMode}" Margin="0,0,0,5"/>
+          <Button HorizontalAlignment="Stretch" Classes="Large" Grid.Row="0" IsEnabled="True" Content="DNS" Command="{Binding SetDNSMode}" Margin="0,0,0,5"/>
+          <Button HorizontalAlignment="Stretch" Classes="Large" Grid.Row="1" IsEnabled="True" Content="IP Config" Command="{Binding SetIpConfigMode}" Margin="0,0,0,5"/>
         </Grid>
 
-        <rxui:RoutedViewHost Grid.Row="0" Router="{Binding Router}">
+        <rxui:RoutedViewHost Grid.Row="0" Router="{Binding Router}" Margin="5,0,0,0">
             <rxui:RoutedViewHost.DefaultContent>
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
                     Welcome to SpiderWorker

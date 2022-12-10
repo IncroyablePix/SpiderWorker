@@ -1,11 +1,8 @@
 ﻿using SpiderWorker.Services;
+using SpiderWorker.Services.IPConfig;
 using SpiderWorker.ViewModels;
 using Splat;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpiderWorker
 {
@@ -15,9 +12,11 @@ namespace SpiderWorker
         {
             services.Register<DnsReaderWriter>(() => new WindowsDnsReaderWriter());
             services.Register<IDnsManagerService>(() => new DnsManagerService(resolver.GetRequiredService<DnsReaderWriter>()));
+            services.Register<IIPConfigurator>(() => new WindowsIPConfigurator());
 
             services.Register<MainWindowViewModel>(() => new MainWindowViewModel());
             services.Register<DnsViewModel>(() => new DnsViewModel(resolver.GetRequiredService<MainWindowViewModel>(), resolver.GetRequiredService<IDnsManagerService>()));
+            services.Register<IpConfigViewModel>(() => new IpConfigViewModel(resolver.GetRequiredService<MainWindowViewModel>(), resolver.GetRequiredService<IIPConfigurator>()));
         }
         
         public static TService GetRequiredService<TService>(this IReadonlyDependencyResolver resolver)

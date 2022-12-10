@@ -28,7 +28,8 @@ namespace SpiderWorker.Services
 
         protected (bool Success, GroupCollection Groups) Matches(string line)
         {
-            var lineRx = new Regex(@"^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+([a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,}))\s*#\s*(Managed by SpiderWorker)\s*$");
+            
+            var lineRx = new Regex(@"^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+((([a-zA-Z0-9][0-9a-zA-Z\-_]+)*\.)+[a-zA-Z]{2,})\s*#\s*(Managed by SpiderWorker)\s*$");
             var match = lineRx.Match(line);
 
             return (match.Success, match.Groups);

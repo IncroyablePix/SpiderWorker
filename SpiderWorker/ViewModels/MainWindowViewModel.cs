@@ -11,7 +11,6 @@ namespace SpiderWorker.ViewModels
     public class MainWindowViewModel : ReactiveObject, IScreen
     {
         public ReactiveCommand<Unit, Unit> SetDNSModeCommand { get; }
-        public string Greeting => "Welcome to Avalonia!";
 
         public RoutingState Router { get; } = new RoutingState();
 
@@ -23,6 +22,11 @@ namespace SpiderWorker.ViewModels
         public void SetDNSMode()
         {
             Router.Navigate.Execute(Locator.Current.GetService<DnsViewModel>());
+        }
+
+        public void SetIpConfigMode()
+        {
+            Router.Navigate.Execute(Locator.Current.GetService<IpConfigViewModel>());
         }
     }
 }

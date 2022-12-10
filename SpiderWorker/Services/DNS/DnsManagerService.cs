@@ -10,12 +10,12 @@ namespace SpiderWorker.Services
 {
     public class DnsManagerService : IDnsManagerService
     {
-        private HashSet<DNSEntry> _entries = new();
+        private List<DNSEntry> _entries = new();
         private DnsReaderWriter ReaderWriter { get; set; }
 
         public DnsManagerService(DnsReaderWriter readerWriter)
         {
-            _entries = readerWriter.Read().ToHashSet();
+            _entries = readerWriter.Read().ToList();
             ReaderWriter = readerWriter;
         }
 

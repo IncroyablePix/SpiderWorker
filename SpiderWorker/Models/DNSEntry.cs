@@ -16,17 +16,15 @@ namespace SpiderWorker.Models
         public string HostName { get; set; }
 
         public override string ToString() => $"{IPAddress} {HostName} {SpiderTag}\r\n";
-        public override int GetHashCode() => IPAddress.GetHashCode() ^ HostName.GetHashCode();
+        public override int GetHashCode() => $"{IPAddress} + {HostName}".GetHashCode();
         public override bool Equals(object? obj)
         {
-            if (obj == null)
-                return false;
-
             var other = obj as DNSEntry;
+            
             if (other is null)
                 return false;
 
-            return HostName == other.HostName && IPAddress.Equals(other.IPAddress);
+            return HostName == other.HostName && IPAddress == other.IPAddress;
         }
 
         public static bool operator ==(DNSEntry a, DNSEntry b)
