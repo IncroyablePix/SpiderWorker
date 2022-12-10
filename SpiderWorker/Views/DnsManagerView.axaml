@@ -7,14 +7,12 @@
     <Design.DataContext>
         <vm:DnsViewModel/>
     </Design.DataContext>
-  <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-      <TextBlock VerticalAlignment="Center">DNS Manager</TextBlock>
+  <DockPanel LastChildFill="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,5">
       <Button Classes="Large" IsEnabled="True" Content="Add DNS entry" Width="150" Command="{Binding AddEntry}" Margin="0,0,5,0"/>
-      <Button Classes="Large" IsEnabled="True" Content="Delete" Width="150" Command="{Binding DeleteEntry}" Margin="0,0,5,0" />
       <Button Classes="Large" IsEnabled="True" Content="Save" Width="150" Command="{Binding Save}" Margin="0,0,5,0" />
     </StackPanel>
-    <DataGrid SelectionMode="Extended" Items="{Binding Entries}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="350">
+    <DataGrid SelectionMode="Single" Items="{Binding Entries}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="350">
       <DataGrid.Columns>
         <DataGridTextColumn Header="Hostname" Binding="{Binding HostName}" Width="2*"/>
         <DataGridTextColumn Header="IP Address" Binding="{Binding IPAddress}" Width="2*" />
@@ -27,5 +25,5 @@
         </DataGridTemplateColumn>
       </DataGrid.Columns>
     </DataGrid>
-  </StackPanel>
+  </DockPanel>
 </UserControl>

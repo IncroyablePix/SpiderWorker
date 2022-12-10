@@ -28,4 +28,10 @@
   <Style Selector="ComboBoxItem.SelectItem">
     <Setter Property="Foreground" Value="Black"/>
   </Style>
+  <Style Selector="TextBlock.SelectName">
+    <Setter Property="Foreground" Value="Black"/>
+  </Style>
+  <Style Selector="TextBlock.Tip">
+    <Setter Property="Foreground" Value="Black"/>
+  </Style>
 </Styles>

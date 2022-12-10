@@ -25,7 +25,6 @@ namespace SpiderWorker.ViewModels
         public ReactiveCommand<Unit, Unit> AddNewEntryCommand { get; }
         public ReactiveCommand<DNSEntry, Unit> DeleteEntryCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand { get; }
-        public ReactiveCommand<SelectionChangedEventArgs, Unit> SelectionChangedCommand;
 
         public DnsViewModel(IScreen screen, IDnsManagerService dnsManagerService)
         {
@@ -35,14 +34,8 @@ namespace SpiderWorker.ViewModels
             AddNewEntryCommand = ReactiveCommand.Create(AddEntry);
             DeleteEntryCommand = ReactiveCommand.Create<DNSEntry>(DeleteEntry);
             SaveCommand = ReactiveCommand.Create(Save);
-            SelectionChangedCommand = ReactiveCommand.Create<SelectionChangedEventArgs>(SelectionChanged);
         }
-
-        private void SelectionChanged(SelectionChangedEventArgs e)
-        {
-            Console.WriteLine();
-        }
-
+        
         private void AddEntry()
         {
             var entry = new DNSEntry("localhost", "127.0.0.1");
