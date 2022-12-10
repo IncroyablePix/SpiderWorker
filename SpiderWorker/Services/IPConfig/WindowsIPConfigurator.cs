@@ -8,6 +8,7 @@ using System.Net.NetworkInformation;
 using SpiderInterface = SpiderWorker.Models.NetworkInterface;
 using NetworkInterface = System.Net.NetworkInformation.NetworkInterface;
 using System.Management;
+using System.Diagnostics;
 
 namespace SpiderWorker.Services.IPConfig
 {
@@ -25,97 +26,74 @@ namespace SpiderWorker.Services.IPConfig
             var ip = ipProps.UnicastAddresses.FirstOrDefault(a => a.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
             var subnetMask = ipProps.UnicastAddresses.FirstOrDefault(a => a.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
             var gateway = ipProps.GatewayAddresses.FirstOrDefault(a => a.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
-            
-            var dns = ipProps.DnsAddresses.FirstOrDefault(a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
-            var dns2 = ipProps.DnsAddresses.FirstOrDefault(a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+
+            // Get preferred and alternate DNS
+            var preferredDNS = ipProps.DnsAddresses.FirstOrDefault(a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+            var alternateDNS = ipProps.DnsAddresses.LastOrDefault(a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+
+            // Are DNS servers provided by DHCP ?
+            var autoDNS = false;
+            var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces\" + itf.Id);
+            if (key != null)
+            {
+                var nameServer = key.GetValue("NameServer");
+                if (nameServer != null)
+                {
+                    autoDNS = string.IsNullOrEmpty(nameServer.ToString());
+                }
+            }
 
             var isDHCP = ipProps.GetIPv4Properties().IsDhcpEnabled;
 
-            return new SpiderInterface(itf.Name, ip.Address.ToString() ?? string.Empty, subnetMask?.IPv4Mask?.ToString() ?? string.Empty, gateway?.Address?.ToString() ?? string.Empty, dns?.ToString() ?? string.Empty, dns2?.ToString() ?? string.Empty, isDHCP);
+            return new SpiderInterface(itf.Name, ip.Address.ToString() ?? string.Empty, subnetMask?.IPv4Mask?.ToString() ?? string.Empty, gateway?.Address?.ToString() ?? string.Empty, preferredDNS?.ToString() ?? string.Empty, alternateDNS?.ToString() ?? string.Empty, isDHCP, autoDNS);
         }
 
         public bool ApplyConfiguration(SpiderInterface networkInterface)
         {
+            if (networkInterface.IsApplied)
+                return true;
+            
             var itf = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(i => i.Name == networkInterface.Name);
             if (itf == null)
                 return false;
 
-            var ipProps = itf.GetIPProperties();
-            if (networkInterface.IsDHCP)
-                SetIP(networkInterface.IP, networkInterface.SubnetMask, networkInterface.Gateway);
-
-            // Change interface properties
-            var ip = ipProps.UnicastAddresses.FirstOrDefault(a => a.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
-
-            ip.Address.Address = System.Net.IPAddress.Parse(networkInterface.IP).Address;
-            ip.IPv4Mask.Address = System.Net.IPAddress.Parse(networkInterface.SubnetMask).Address;
+            if (!SetIP(networkInterface))
+                return false;
+            
+            if(!SetDNS(networkInterface))
+                return false;
 
             return true;
         }
 
-        private void SetIP(string ipAddress, string subnetMask, string gateway)
+        private bool SetIP(SpiderInterface netIf)
         {
-            using (var networkConfigMng = new ManagementClass("Win32_NetworkAdapterConfiguration"))
-            {
-                using (var networkConfigs = networkConfigMng.GetInstances())
-                {
-                    foreach (var managementObject in networkConfigs.Cast<ManagementObject>().Where(managementObject => (bool)managementObject["IPEnabled"]))
-                    {
-                        using (var newIP = managementObject.GetMethodParameters("EnableStatic"))
-                        {
-                            // Set new IP address and subnet if needed
-                            if ((!String.IsNullOrEmpty(ipAddress)) || (!String.IsNullOrEmpty(subnetMask)))
-                            {
-                                if (!String.IsNullOrEmpty(ipAddress))
-                                {
-                                    newIP["IPAddress"] = new[] { ipAddress };
-                                }
+            var p = new Process();
+            if (netIf.Configuration.IPv4.IsDHCP)
+                p.StartInfo = new ProcessStartInfo("netsh", $"interface ip set address \"{netIf.Name}\" dhcp");
+            else
+                p.StartInfo = new ProcessStartInfo("netsh", $"interface ip set address \"{netIf.Name}\" static {netIf.Configuration.IPv4.IP} {netIf.Configuration.IPv4.SubnetMask} {netIf.Configuration.IPv4.Gateway}");
+            
+            p.StartInfo.CreateNoWindow = true;
+            p.Start();
+            p.WaitForExit();
 
-                                if (!String.IsNullOrEmpty(subnetMask))
-                                {
-                                    newIP["SubnetMask"] = new[] { subnetMask };
-                                }
-
-                                managementObject.InvokeMethod("EnableStatic", newIP, null);
-                            }
-
-                            // Set mew gateway if needed
-                            if (!String.IsNullOrEmpty(gateway))
-                            {
-                                using (var newGateway = managementObject.GetMethodParameters("SetGateways"))
-                                {
-                                    newGateway["DefaultIPGateway"] = new[] { gateway };
-                                    newGateway["GatewayCostMetric"] = new[] { 1 };
-                                    managementObject.InvokeMethod("SetGateways", newGateway, null);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            return p.ExitCode == 0;
         }
 
-        public void SetDNS(string NIC, string priWINS, string secWINS)
+        public bool SetDNS(SpiderInterface netIf)
         {
-            ManagementClass objMC = new ManagementClass("Win32_NetworkAdapterConfiguration");
-            ManagementObjectCollection objMOC = objMC.GetInstances();
+            var p = new Process();
+            if(netIf.Configuration.IPv4.AutoDNS)
+                p.StartInfo = new ProcessStartInfo("netsh", $"interface ip set dns \"{netIf.Name}\" dhcp");
+            else
+                p.StartInfo = new ProcessStartInfo("netsh", $"interface ip set dns \"{netIf.Name}\" static {netIf.Configuration.IPv4.PreferredDNS} {netIf.Configuration.IPv4.AlternateDNS}");
+            
+            p.StartInfo.CreateNoWindow = true;
+            p.Start();
+            p.WaitForExit();
 
-            foreach (ManagementObject objMO in objMOC)
-            {
-                if ((bool)objMO["IPEnabled"])
-                {
-                    if (objMO["Caption"].Equals(NIC))
-                    {
-                        ManagementBaseObject setWINS;
-                        ManagementBaseObject wins =
-                        objMO.GetMethodParameters("SetWINSServer");
-                        wins.SetPropertyValue("WINSPrimaryServer", priWINS);
-                        wins.SetPropertyValue("WINSSecondaryServer", secWINS);
-
-                        setWINS = objMO.InvokeMethod("SetWINSServer", wins, null);
-                    }
-                }
-            }
+            return p.ExitCode == 0;
         }
     }
 }

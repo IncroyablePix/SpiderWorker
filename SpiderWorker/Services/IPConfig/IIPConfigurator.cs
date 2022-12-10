@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
+using NetworkInterface = SpiderWorker.Models.NetworkInterface;
 
 namespace SpiderWorker.Services.IPConfig
 {

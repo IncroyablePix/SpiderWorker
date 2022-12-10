@@ -21,4 +21,11 @@
       <Setter Property="Foreground" Value="LightCoral"/>
       <Setter Property="BorderBrush" Value="LightCoral"/>
     </Style>
+  <Style Selector="TextBlock.FormLabel">
+    <Setter Property="VerticalAlignment" Value="Center"/>
+    <Setter Property="Margin" Value="0,0,5,0"/>
+  </Style>
+  <Style Selector="ComboBoxItem.SelectItem">
+    <Setter Property="Foreground" Value="Black"/>
+  </Style>
 </Styles>

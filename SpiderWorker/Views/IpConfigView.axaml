@@ -9,48 +9,52 @@
   <Design.DataContext>
     <vm:IpConfigViewModel/>
   </Design.DataContext>
-  
-  <StackPanel Orientation="Vertical">
-    <ComboBox
-        Items="{Binding NetworkInterfaces}"
-        HorizontalAlignment="Stretch"
-        SelectedIndex="0"
-        SelectedItem="{Binding SelectedNetworkInterface, Mode=TwoWay}">
-      >
-      <ComboBox.ItemTemplate>
-        <DataTemplate>
-          <ComboBoxItem Foreground="Black" Content="{Binding Name}" Focusable="True" />
-        </DataTemplate>
-      </ComboBox.ItemTemplate>
-    </ComboBox>
-    <Grid>
-      <Grid.RowDefinitions>
-        <RowDefinition/>
-        <RowDefinition/>
-        <RowDefinition/>
-        <RowDefinition/>
-        <RowDefinition/>
-        <RowDefinition/>
-      </Grid.RowDefinitions>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition/>
-        <ColumnDefinition/>
-      </Grid.ColumnDefinitions>
-      <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">IPv4</TextBlock>
-      <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Subnet mask</TextBlock>
-      <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Default gateway</TextBlock>
-      <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">Preferred DNS server</TextBlock>
-      <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Alternate DNS server</TextBlock>
-      <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center">DHCP enabled</TextBlock>
+  <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+    <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+      <ComboBox
+          Items="{Binding NetworkInterfaces}"
+          HorizontalAlignment="Stretch"
+          SelectedIndex="0"
+          SelectedItem="{Binding SelectedNetworkInterface, Mode=TwoWay}">
+        >
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <ComboBoxItem Classes="SelectItem" Content="{Binding Name}" Focusable="True" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+      <Grid Margin="0,0,0,5">
+        <Grid.RowDefinitions>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Classes="FormLabel" Grid.Row="0" Grid.Column="0">DHCP enabled</TextBlock>
+        <TextBlock Classes="FormLabel" Grid.Row="1" Grid.Column="0">IPv4</TextBlock>
+        <TextBlock Classes="FormLabel" Grid.Row="2" Grid.Column="0">Subnet mask</TextBlock>
+        <TextBlock Classes="FormLabel" Grid.Row="3" Grid.Column="0">Default gateway</TextBlock>
+        <TextBlock Classes="FormLabel" Grid.Row="4" Grid.Column="0">DNS DHCP enabled</TextBlock>
+        <TextBlock Classes="FormLabel" Grid.Row="5" Grid.Column="0">Preferred DNS server</TextBlock>
+        <TextBlock Classes="FormLabel" Grid.Row="6" Grid.Column="0">Alternate DNS server</TextBlock>
 
-      <TextBox Grid.Row="0" Grid.Column="1" Foreground="Black" Text="{Binding IPv4Address}" IsEnabled="{Binding IsDhcpDisabled}"/>
-      <TextBox Grid.Row="1" Grid.Column="1" Foreground="Black" Text="{Binding SubnetMask}" IsEnabled="{Binding IsDhcpDisabled}"/>
-      <TextBox Grid.Row="2" Grid.Column="1" Foreground="Black" Text="{Binding DefaultGateway}" IsEnabled="{Binding IsDhcpDisabled}"/>
-      <TextBox Grid.Row="3" Grid.Column="1" Foreground="Black" Text="{Binding PreferredDNS}"/>
-      <TextBox Grid.Row="4" Grid.Column="1" Foreground="Black" Text="{Binding AlternateDNS}"/>
-      <CheckBox Grid.Row="5" Grid.Column="1" Foreground="Black" IsChecked="{Binding IsDhcpEnabled}"/>
-    </Grid>
+        <CheckBox Grid.Row="0" Grid.Column="1" Foreground="Black" IsChecked="{Binding IsDhcpEnabled}"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Foreground="Black" Text="{Binding IPv4Address}" IsEnabled="{Binding IsDhcpDisabled}"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Foreground="Black" Text="{Binding SubnetMask}" IsEnabled="{Binding IsDhcpDisabled}"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Foreground="Black" Text="{Binding DefaultGateway}" IsEnabled="{Binding IsDhcpDisabled}"/>
+        <CheckBox Grid.Row="4" Grid.Column="1" Foreground="Black" IsChecked="{Binding IsDnsDhcpEnabled}" IsEnabled="{Binding CanEnableDnsDhcp}"/>
+        <TextBox Grid.Row="5" Grid.Column="1" Foreground="Black" Text="{Binding PreferredDNS}" IsEnabled="{Binding IsDnsDhcpDisabled}"/>
+        <TextBox Grid.Row="6" Grid.Column="1" Foreground="Black" Text="{Binding AlternateDNS}" IsEnabled="{Binding IsDnsDhcpDisabled}"/>
+      </Grid>
 
-    <Button HorizontalAlignment="Stretch" Classes="Large" IsEnabled="True" Content="Apply" Command="{Binding ApplyIpConfig}" Margin="0,0,0,5"/>
+      <Button HorizontalAlignment="Stretch" Classes="Large" IsEnabled="True" Content="Apply" Command="{Binding ApplyIpConfig}" Margin="0,0,0,5"/>
+    </StackPanel>
   </StackPanel>
 </UserControl>

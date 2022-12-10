@@ -13,10 +13,11 @@ namespace SpiderWorker
             services.Register<DnsReaderWriter>(() => new WindowsDnsReaderWriter());
             services.Register<IDnsManagerService>(() => new DnsManagerService(resolver.GetRequiredService<DnsReaderWriter>()));
             services.Register<IIPConfigurator>(() => new WindowsIPConfigurator());
+            services.Register<IConfigurationsProvider>(() => new LocalConfigurationsProvider());
 
             services.Register<MainWindowViewModel>(() => new MainWindowViewModel());
             services.Register<DnsViewModel>(() => new DnsViewModel(resolver.GetRequiredService<MainWindowViewModel>(), resolver.GetRequiredService<IDnsManagerService>()));
-            services.Register<IpConfigViewModel>(() => new IpConfigViewModel(resolver.GetRequiredService<MainWindowViewModel>(), resolver.GetRequiredService<IIPConfigurator>()));
+            services.Register<IpConfigViewModel>(() => new IpConfigViewModel(resolver.GetRequiredService<MainWindowViewModel>(), resolver.GetRequiredService<IIPConfigurator>(), resolver.GetRequiredService<IConfigurationsProvider>()));
         }
         
         public static TService GetRequiredService<TService>(this IReadonlyDependencyResolver resolver)

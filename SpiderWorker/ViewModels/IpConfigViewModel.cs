@@ -15,27 +15,50 @@ namespace SpiderWorker.ViewModels
     {
         private NetworkInterface _currentNetworkInterface;
         private IIPConfigurator _ipConfigurator;
+        private IConfigurationsProvider _configurationsProvider;
         public string? UrlPathSegment => Guid.NewGuid().ToString().Substring(0, 5);
         public List<NetworkInterface> NetworkInterfaces { get; }
 
         public ReactiveCommand<Unit, Unit> ApplyIpConfigCommand { get; }
 
         //---
-        public string IPv4Address { get => _currentNetworkInterface.IP; set => _currentNetworkInterface.IP = value; }
-        public string SubnetMask { get => _currentNetworkInterface.SubnetMask; set => _currentNetworkInterface.SubnetMask = value; }
-        public string DefaultGateway { get => _currentNetworkInterface.Gateway; set => _currentNetworkInterface.Gateway = value; }
-        public string PreferredDNS { get => _currentNetworkInterface.PreferredDNS; set => _currentNetworkInterface.PreferredDNS = value; }
-        public string AlternateDNS { get => _currentNetworkInterface.AlternateDNS; set => _currentNetworkInterface.AlternateDNS = value; }
+        public string IPv4Address { get => _currentNetworkInterface.Configuration.IPv4.IP; set => _currentNetworkInterface.Configuration.IPv4.IP = value; }
+        public string SubnetMask { get => _currentNetworkInterface.Configuration.IPv4.SubnetMask; set => _currentNetworkInterface.Configuration.IPv4.SubnetMask = value; }
+        public string DefaultGateway { get => _currentNetworkInterface.Configuration.IPv4.Gateway; set => _currentNetworkInterface.Configuration.IPv4.Gateway = value; }
+        public string PreferredDNS { get => _currentNetworkInterface.Configuration.IPv4.PreferredDNS; set => _currentNetworkInterface.Configuration.IPv4.PreferredDNS = value; }
+        public string AlternateDNS { get => _currentNetworkInterface.Configuration.IPv4.AlternateDNS; set => _currentNetworkInterface.Configuration.IPv4.AlternateDNS = value; }
         public bool IsDhcpEnabled 
         { 
-            get => _currentNetworkInterface.IsDHCP; 
+            get => _currentNetworkInterface.Configuration.IPv4.IsDHCP; 
             set
             {
-                _currentNetworkInterface.IsDHCP = value;
+                _currentNetworkInterface.Configuration.IPv4.IsDHCP = value;
+                if (!value)
+                {
+                    IsDnsDhcpEnabled = false;
+                    OnPropertyChanged(nameof(IsDnsDhcpEnabled));
+                    OnPropertyChanged(nameof(IsDnsDhcpDisabled));
+                }
+
                 OnPropertyChanged(nameof(IsDhcpDisabled));
+                OnPropertyChanged(nameof(CanEnableDnsDhcp));
             }
         }
+
+        public bool CanEnableDnsDhcp => IsDhcpEnabled;
         public bool IsDhcpDisabled => !IsDhcpEnabled;
+
+        public bool IsDnsDhcpEnabled
+        {
+            get => _currentNetworkInterface.Configuration.IPv4.AutoDNS;
+            set
+            {
+                _currentNetworkInterface.Configuration.IPv4.AutoDNS = value;
+                OnPropertyChanged(nameof(IsDnsDhcpDisabled));
+            }
+        }
+        public bool IsDnsDhcpDisabled => !IsDnsDhcpEnabled;
+        
         public NetworkInterface SelectedNetworkInterface
         {
             get => _currentNetworkInterface;
@@ -49,6 +72,8 @@ namespace SpiderWorker.ViewModels
                 OnPropertyChanged(nameof(AlternateDNS));
                 OnPropertyChanged(nameof(IsDhcpEnabled));
                 OnPropertyChanged(nameof(IsDhcpDisabled));
+                OnPropertyChanged(nameof(IsDnsDhcpEnabled));
+                OnPropertyChanged(nameof(IsDnsDhcpDisabled));
             }
         }
 
@@ -56,11 +81,12 @@ namespace SpiderWorker.ViewModels
 
         public IScreen HostScreen { get; }
 
-        public IpConfigViewModel(IScreen screen, IIPConfigurator ipConfigurator)
+        public IpConfigViewModel(IScreen screen, IIPConfigurator ipConfigurator, IConfigurationsProvider configurationsProvider)
         {
             HostScreen = screen;
             NetworkInterfaces = ipConfigurator.GetNetworkInterfaces().ToList();
             _ipConfigurator = ipConfigurator;
+            _configurationsProvider = configurationsProvider;
             _currentNetworkInterface = NetworkInterfaces.FirstOrDefault();
             ApplyIpConfigCommand = ReactiveCommand.Create(ApplyIpConfig);
         }
