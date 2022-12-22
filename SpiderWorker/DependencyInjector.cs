@@ -1,4 +1,6 @@
 ﻿using SpiderWorker.Services;
+using SpiderWorker.Services.Common;
+using SpiderWorker.Services.Firewall;
 using SpiderWorker.Services.IPConfig;
 using SpiderWorker.ViewModels;
 using Splat;
@@ -14,21 +16,25 @@ namespace SpiderWorker
             services.Register<IDnsManagerService>(() => new DnsManagerService(resolver.GetRequiredService<DnsReaderWriter>()));
             services.Register<IIPConfigurator>(() => new WindowsIPConfigurator());
             services.Register<IConfigurationsProvider>(() => new LocalConfigurationsProvider());
+            services.Register<IFirewallManager>(() => new WindowsFirewallManager());
 
             services.Register<MainWindowViewModel>(() => new MainWindowViewModel());
             services.Register<DnsViewModel>(() => new DnsViewModel(resolver.GetRequiredService<MainWindowViewModel>(), resolver.GetRequiredService<IDnsManagerService>()));
             services.Register<IpConfigViewModel>(() => new IpConfigViewModel(resolver.GetRequiredService<MainWindowViewModel>(), resolver.GetRequiredService<IIPConfigurator>(), resolver.GetRequiredService<IConfigurationsProvider>()));
+            services.Register<FirewallViewModel>(() => new FirewallViewModel(resolver.GetRequiredService<MainWindowViewModel>(), resolver.GetRequiredService<IFirewallManager>()));
+
+            services.RegisterLazySingleton<IThemeService>(() => new ThemeService(new DefaultThemeConfiguration()));
         }
         
         public static TService GetRequiredService<TService>(this IReadonlyDependencyResolver resolver)
         {
             var service = resolver.GetService<TService>();
-            if (service is null) // Splat is not able to resolve type for us
+            if (service is null)
             {
                 throw new InvalidOperationException($"Failed to resolve object of type {typeof(TService)}"); // throw error with detailed description
             }
 
-            return service; // return instance if not null
+            return service;
         }
     }
 }

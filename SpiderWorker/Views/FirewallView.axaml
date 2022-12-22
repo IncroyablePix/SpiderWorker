@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:SpiderWorker.ViewModels"
+             x:Class="SpiderWorker.Views.FirewallView">
+
+  <Design.DataContext>
+    <vm:FirewallViewModel/>
+  </Design.DataContext>
+  <DockPanel LastChildFill="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+    <Grid DockPanel.Dock="Top" Margin="0,0,0,5" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+      <Grid.RowDefinitions>
+        <RowDefinition/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Grid.Row="0" Grid.Column="0" Margin="0 0 0 5">Firewall enabled</TextBlock>
+      <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding IsFirewallEnabled}" Margin="0 0 0 5"/>
+    </Grid>
+  </DockPanel>
+</UserControl>

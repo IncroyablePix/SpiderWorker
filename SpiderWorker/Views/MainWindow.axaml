@@ -7,7 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SpiderWorker.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/spider-worker.ico"
         Title="SpiderWorker">
 
     <Design.DataContext>
@@ -19,10 +19,12 @@
             <Grid.RowDefinitions>
               <RowDefinition />
               <RowDefinition />
+              <RowDefinition />
             </Grid.RowDefinitions>
 
-          <Button HorizontalAlignment="Stretch" Classes="Large" Grid.Row="0" IsEnabled="True" Content="DNS" Command="{Binding SetDNSMode}" Margin="0,0,0,5"/>
-          <Button HorizontalAlignment="Stretch" Classes="Large" Grid.Row="1" IsEnabled="True" Content="IP Config" Command="{Binding SetIpConfigMode}" Margin="0,0,0,5"/>
+          <Button HorizontalAlignment="Stretch" Classes="operationButton" Grid.Row="0" IsEnabled="True" Content="DNS" Command="{Binding SetDNSMode}" Margin="0,0,0,5"/>
+          <Button HorizontalAlignment="Stretch" Classes="operationButton" Grid.Row="1" IsEnabled="True" Content="IP Config" Command="{Binding SetIpConfigMode}" Margin="0,0,0,5"/>
+          <Button HorizontalAlignment="Stretch" Classes="operationButton" Grid.Row="2" IsEnabled="True" Content="Firewall" Command="{Binding SetFirewallMode}" Margin="0,0,0,5"/>
         </Grid>
 
         <rxui:RoutedViewHost Grid.Row="0" Router="{Binding Router}" Margin="5,0,0,0">

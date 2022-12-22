@@ -27,11 +27,11 @@ namespace SpiderWorker.ViewModels
         public ReactiveCommand<InterfaceConfiguration, Unit> ApplyConfigurationCommand { get; }
 
         //---
-        public string IPv4Address { get => _currentNetworkInterface.Configuration?.IPv4?.IP ?? string.Empty; set => _currentNetworkInterface.Configuration.IPv4.IP = value; }
-        public string SubnetMask { get => _currentNetworkInterface.Configuration?.IPv4?.SubnetMask ?? string.Empty; set => _currentNetworkInterface.Configuration.IPv4.SubnetMask = value; }
-        public string DefaultGateway { get => _currentNetworkInterface.Configuration?.IPv4?.Gateway ?? string.Empty; set => _currentNetworkInterface.Configuration.IPv4.Gateway = value; }
-        public string PreferredDNS { get => _currentNetworkInterface.Configuration?.IPv4?.PreferredDNS ?? string.Empty; set => _currentNetworkInterface.Configuration.IPv4.PreferredDNS = value; }
-        public string AlternateDNS { get => _currentNetworkInterface.Configuration?.IPv4.AlternateDNS ?? string.Empty; set => _currentNetworkInterface.Configuration.IPv4.AlternateDNS = value; }
+        public string IPv4Address { get => _currentNetworkInterface.Configuration?.IPv4?.IP ?? string.Empty; set { _currentNetworkInterface.Configuration.IPv4.IP = value; OnPropertyChanged(nameof(IsErrorFree)); } }
+        public string SubnetMask { get => _currentNetworkInterface.Configuration?.IPv4?.SubnetMask ?? string.Empty; set { _currentNetworkInterface.Configuration.IPv4.SubnetMask = value; OnPropertyChanged(nameof(IsErrorFree)); } }
+        public string DefaultGateway { get => _currentNetworkInterface.Configuration?.IPv4?.Gateway ?? string.Empty; set { _currentNetworkInterface.Configuration.IPv4.Gateway = value; OnPropertyChanged(nameof(IsErrorFree)); } }
+        public string PreferredDNS { get => _currentNetworkInterface.Configuration?.IPv4?.PreferredDNS ?? string.Empty; set { _currentNetworkInterface.Configuration.IPv4.PreferredDNS = value; OnPropertyChanged(nameof(IsErrorFree)); } }
+        public string AlternateDNS { get => _currentNetworkInterface.Configuration?.IPv4.AlternateDNS ?? string.Empty; set { _currentNetworkInterface.Configuration.IPv4.AlternateDNS = value; OnPropertyChanged(nameof(IsErrorFree)); } }
         public bool IsDhcpEnabled 
         { 
             get => _currentNetworkInterface.Configuration.IPv4.IsDHCP; 
@@ -47,8 +47,25 @@ namespace SpiderWorker.ViewModels
 
                 OnPropertyChanged(nameof(IsDhcpDisabled));
                 OnPropertyChanged(nameof(CanEnableDnsDhcp));
+                OnPropertyChanged(nameof(IsErrorFree));
             }
         }
+
+        public bool HasError 
+        { 
+            get
+            {
+                var ipv4Regex = new System.Text.RegularExpressions.Regex(@"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
+                var subnetMaskRegex = new System.Text.RegularExpressions.Regex(@"^((128|192|224|240|248|252|254|255)\.0\.0\.0|255\.(0|128|192|224|240|248|252|254)\.0\.0|255\.255\.(0|128|192|224|240|248|252|254)\.0|255\.255\.255\.(0|128|192|224|240|248|252|254))$");
+
+                var isIpCorrect = IsDhcpEnabled || (IsDhcpDisabled && ipv4Regex.IsMatch(IPv4Address) && subnetMaskRegex.IsMatch(SubnetMask) && ipv4Regex.IsMatch(DefaultGateway));
+                var isDNSCorrect = IsDnsDhcpEnabled || (IsDnsDhcpDisabled && ipv4Regex.IsMatch(PreferredDNS) && (string.IsNullOrEmpty(AlternateDNS) || ipv4Regex.IsMatch(AlternateDNS)));
+
+                return !isIpCorrect || !isDNSCorrect;
+            }
+        }
+
+        public bool IsErrorFree => !HasError;
 
         public bool CanEnableDnsDhcp => IsDhcpEnabled;
         public bool IsDhcpDisabled => !IsDhcpEnabled;
@@ -60,6 +77,7 @@ namespace SpiderWorker.ViewModels
             {
                 _currentNetworkInterface.Configuration.IPv4.AutoDNS = value;
                 OnPropertyChanged(nameof(IsDnsDhcpDisabled));
+                OnPropertyChanged(nameof(IsErrorFree));
             }
         }
         public bool IsDnsDhcpDisabled => !IsDnsDhcpEnabled;
@@ -79,6 +97,7 @@ namespace SpiderWorker.ViewModels
                 OnPropertyChanged(nameof(IsDhcpDisabled));
                 OnPropertyChanged(nameof(IsDnsDhcpEnabled));
                 OnPropertyChanged(nameof(IsDnsDhcpDisabled));
+                OnPropertyChanged(nameof(IsErrorFree));
             }
         }
 

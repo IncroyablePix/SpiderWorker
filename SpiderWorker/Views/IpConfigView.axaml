@@ -11,7 +11,7 @@
   </Design.DataContext>
   <DockPanel LastChildFill="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
     <DockPanel DockPanel.Dock="Left" LastChildFill="True" VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="250" Margin="0,0,5,0">
-      <Button DockPanel.Dock="Bottom" Margin="0,5,0,0" Classes="Large" Content="Add current" Command="{Binding AddCurrentConfiguration}"/>
+      <Button DockPanel.Dock="Bottom" Margin="0,5,0,0" Classes="operationButton" Content="Add current" Command="{Binding AddCurrentConfiguration}" HorizontalAlignment="Stretch" />
       <ListBox Items="{Binding InterfacesConfigurations}">
         <ListBox.ItemTemplate>
           <DataTemplate>
@@ -21,9 +21,9 @@
                   <TextBlock Classes="Tip" Text="{Binding FullDescription}"/>
                 </ToolTip.Tip>
               </TextBlock>
-              <StackPanel Orientation="Horizontal">
-                <Button Classes="Large" Content="Apply" IsEnabled="True" CommandParameter="{Binding}" Command="{Binding $parent[UserControl].DataContext.ApplyConfiguration}" />
-                <Button Classes="Large" Content="Delete" IsEnabled="True" CommandParameter="{Binding}" Command="{Binding $parent[UserControl].DataContext.DeleteConfiguration}" />
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                <Button Classes="operationButton" Content="Apply" Margin="0 5 5 0" IsEnabled="True" CommandParameter="{Binding}" Command="{Binding $parent[UserControl].DataContext.ApplyConfiguration}" />
+                <Button Classes="operationButton" Content="Delete" Margin="0 5 0 0" IsEnabled="True" CommandParameter="{Binding}" Command="{Binding $parent[UserControl].DataContext.DeleteConfiguration}" />
               </StackPanel>
             </StackPanel>
           </DataTemplate>
@@ -57,24 +57,24 @@
           <ColumnDefinition/>
           <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TextBlock Classes="FormLabel" Grid.Row="0" Grid.Column="0">DHCP enabled</TextBlock>
-        <TextBlock Classes="FormLabel" Grid.Row="1" Grid.Column="0">IPv4</TextBlock>
-        <TextBlock Classes="FormLabel" Grid.Row="2" Grid.Column="0">Subnet mask</TextBlock>
-        <TextBlock Classes="FormLabel" Grid.Row="3" Grid.Column="0">Default gateway</TextBlock>
-        <TextBlock Classes="FormLabel" Grid.Row="4" Grid.Column="0">DNS DHCP enabled</TextBlock>
-        <TextBlock Classes="FormLabel" Grid.Row="5" Grid.Column="0">Preferred DNS server</TextBlock>
-        <TextBlock Classes="FormLabel" Grid.Row="6" Grid.Column="0">Alternate DNS server</TextBlock>
+        <TextBlock Classes="FormLabel" Grid.Row="0" Grid.Column="0" Margin="0 0 0 5">DHCP enabled</TextBlock>
+        <TextBlock Classes="FormLabel" Grid.Row="1" Grid.Column="0" Margin="0 0 0 5">IPv4</TextBlock>
+        <TextBlock Classes="FormLabel" Grid.Row="2" Grid.Column="0" Margin="0 0 0 5">Subnet mask</TextBlock>
+        <TextBlock Classes="FormLabel" Grid.Row="3" Grid.Column="0" Margin="0 0 0 5">Default gateway</TextBlock>
+        <TextBlock Classes="FormLabel" Grid.Row="4" Grid.Column="0" Margin="0 0 0 5">DNS DHCP enabled</TextBlock>
+        <TextBlock Classes="FormLabel" Grid.Row="5" Grid.Column="0" Margin="0 0 0 5">Preferred DNS server</TextBlock>
+        <TextBlock Classes="FormLabel" Grid.Row="6" Grid.Column="0" Margin="0 0 0 5">Alternate DNS server</TextBlock>
 
-        <CheckBox Grid.Row="0" Grid.Column="1" Foreground="Black" IsChecked="{Binding IsDhcpEnabled}"/>
-        <TextBox Grid.Row="1" Grid.Column="1" Foreground="Black" Text="{Binding IPv4Address}" IsEnabled="{Binding IsDhcpDisabled}"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Foreground="Black" Text="{Binding SubnetMask}" IsEnabled="{Binding IsDhcpDisabled}"/>
-        <TextBox Grid.Row="3" Grid.Column="1" Foreground="Black" Text="{Binding DefaultGateway}" IsEnabled="{Binding IsDhcpDisabled}"/>
-        <CheckBox Grid.Row="4" Grid.Column="1" Foreground="Black" IsChecked="{Binding IsDnsDhcpEnabled}" IsEnabled="{Binding CanEnableDnsDhcp}"/>
-        <TextBox Grid.Row="5" Grid.Column="1" Foreground="Black" Text="{Binding PreferredDNS}" IsEnabled="{Binding IsDnsDhcpDisabled}"/>
-        <TextBox Grid.Row="6" Grid.Column="1" Foreground="Black" Text="{Binding AlternateDNS}" IsEnabled="{Binding IsDnsDhcpDisabled}"/>
+        <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding IsDhcpEnabled}" Margin="0 0 0 5"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding IPv4Address}" IsEnabled="{Binding IsDhcpDisabled}" Margin="0 0 0 5"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SubnetMask}" IsEnabled="{Binding IsDhcpDisabled}" Margin="0 0 0 5"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding DefaultGateway}" IsEnabled="{Binding IsDhcpDisabled}" Margin="0 0 0 5"/>
+        <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding IsDnsDhcpEnabled}" IsEnabled="{Binding CanEnableDnsDhcp}" Margin="0 0 0 5"/>
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding PreferredDNS}" IsEnabled="{Binding IsDnsDhcpDisabled}" Margin="0 0 0 5"/>
+        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding AlternateDNS}" IsEnabled="{Binding IsDnsDhcpDisabled}" Margin="0 0 0 5"/>
       </Grid>
 
-      <Button HorizontalAlignment="Stretch" Classes="Large" IsEnabled="True" Content="Apply" Command="{Binding ApplyIpConfig}" Margin="0,0,0,5"/>
+      <Button HorizontalAlignment="Stretch" Classes="operationButton" Content="Apply" Command="{Binding ApplyIpConfig}" IsEnabled="{Binding IsErrorFree}" Margin="0,0,0,5"/>
     </StackPanel>
   </DockPanel>
 </UserControl>

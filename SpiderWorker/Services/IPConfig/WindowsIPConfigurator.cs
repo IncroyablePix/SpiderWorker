@@ -57,23 +57,24 @@ namespace SpiderWorker.Services.IPConfig
             if (itf == null)
                 return false;
 
-            if (!SetIP(networkInterface))
-                return false;
-            
-            if(!SetDNS(networkInterface))
+            if (!SetIP(networkInterface) && !SetDNS(networkInterface))
                 return false;
 
             return true;
         }
 
         private bool SetIP(SpiderInterface netIf)
+            => netIf.Configuration.IPv4.IsDHCP ? 
+            ExecuteCommand("netsh", $"interface ipv4 set address \"{netIf.Name}\" dhcp") : 
+            ExecuteCommand("netsh", $"interface ipv4 set address \"{netIf.Name}\" static {netIf.Configuration.IPv4.IP} {netIf.Configuration.IPv4.SubnetMask} {netIf.Configuration.IPv4.Gateway}");
+        
+
+        private bool ExecuteCommand(string command, string args)
         {
             var p = new Process();
-            if (netIf.Configuration.IPv4.IsDHCP)
-                p.StartInfo = new ProcessStartInfo("netsh", $"interface ip set address \"{netIf.Name}\" dhcp");
-            else
-                p.StartInfo = new ProcessStartInfo("netsh", $"interface ip set address \"{netIf.Name}\" static {netIf.Configuration.IPv4.IP} {netIf.Configuration.IPv4.SubnetMask} {netIf.Configuration.IPv4.Gateway}");
-            
+            p.StartInfo = new ProcessStartInfo(command, args);
+
+            p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.CreateNoWindow = true;
             p.Start();
             p.WaitForExit();
@@ -83,17 +84,22 @@ namespace SpiderWorker.Services.IPConfig
 
         public bool SetDNS(SpiderInterface netIf)
         {
-            var p = new Process();
-            if(netIf.Configuration.IPv4.AutoDNS)
-                p.StartInfo = new ProcessStartInfo("netsh", $"interface ip set dns \"{netIf.Name}\" dhcp");
+            bool success;
+            if (netIf.Configuration.IPv4.AutoDNS)
+            {
+                success = ExecuteCommand("netsh", $"interface ip set dns name=\"{netIf.Name}\" dhcp");
+            }
             else
-                p.StartInfo = new ProcessStartInfo("netsh", $"interface ip set dns \"{netIf.Name}\" static {netIf.Configuration.IPv4.PreferredDNS} {netIf.Configuration.IPv4.AlternateDNS}");
-            
-            p.StartInfo.CreateNoWindow = true;
-            p.Start();
-            p.WaitForExit();
+            {
+                success = ExecuteCommand("netsh", $"interface ip set dns name=\"{netIf.Name}\" static {netIf.Configuration.IPv4.PreferredDNS}");
 
-            return p.ExitCode == 0;
+                if (success && !string.IsNullOrWhiteSpace(netIf.Configuration.IPv4.AlternateDNS))
+                {
+                    success = ExecuteCommand("netsh", $"interface ip add dns name=\"{netIf.Name}\" {netIf.Configuration.IPv4.AlternateDNS} index=2");
+                }
+            }
+            
+            return success;
         }
     }
 }

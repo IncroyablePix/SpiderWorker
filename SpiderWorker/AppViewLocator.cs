@@ -16,6 +16,7 @@ namespace SpiderWorker
             HomeViewModel _ => new HomeView(),
             DnsViewModel _ => new DnsManagerView(),
             IpConfigViewModel _ => new IpConfigView(),
+            FirewallViewModel _ => new FirewallView(),
             _ => throw new InvalidOperationException($"Failed to resolve view for {viewModel}")
         };
     }

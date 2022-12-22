@@ -2,25 +2,27 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.PreviewWith>
     <Border Padding="20">
-        <Button Classes="Large" Content="Hey hey hey!"/>
+        <Button Classes="Large" Content="Hey hey hey!" />
     </Border>
     </Design.PreviewWith>
-    <Style Selector="Button.Large">
-        <Setter Property="Margin" Value="0 5"/>
-        <Setter Property="Padding" Value="5"/>
-        <Setter Property="FontSize" Value="18"/>
-        <Setter Property="Background" Value="#00000000"/>
-        <Setter Property="Foreground" Value="LightSkyBlue"/>
-        <Setter Property="BorderBrush" Value="LightSkyBlue"/>
-    </Style>
-    <Style Selector="Button.Large:hover">
-        <Setter Property="Margin" Value="0 5"/>
-        <Setter Property="Padding" Value="5"/>
-        <Setter Property="FontSize" Value="18"/>
-      <Setter Property="Background" Value="#00000000"/>
-      <Setter Property="Foreground" Value="LightCoral"/>
-      <Setter Property="BorderBrush" Value="LightCoral"/>
-    </Style>
+  <Style Selector="Button.Large:pointerover /template/ ContentPresenter">
+    <Setter Property="Margin" Value="0 5"/>
+    <Setter Property="Padding" Value="5"/>
+    <Setter Property="Background" Value="#80006b"/>
+    <Setter Property="BorderBrush" Value="#80006b"/>
+    <Setter Property="CornerRadius" Value="1"/>
+    <Setter Property="Cursor" Value="Hand"/>
+  </Style>
+  <Style Selector="Button.Large">
+      <Setter Property = "Foreground" Value = "#FFFFFFFF" />
+  </Style>
+  <Style Selector="Button.Large /template/ ContentPresenter">
+    <Setter Property="Margin" Value="0 5"/>
+    <Setter Property="Padding" Value="5"/>
+    <Setter Property="Background" Value="#800080"/>
+    <Setter Property="BorderBrush" Value="#800080"/>
+    <Setter Property="CornerRadius" Value="1"/>
+  </Style>
   <Style Selector="TextBlock.FormLabel">
     <Setter Property="VerticalAlignment" Value="Center"/>
     <Setter Property="Margin" Value="0,0,5,0"/>

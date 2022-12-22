@@ -11,14 +11,21 @@ namespace SpiderWorker.Models
     public record IPConfiguration
     {
         public event EventHandler? Changed;
-        public string IP { get; set; } 
-        public string SubnetMask { get; set; }
-        public string Gateway { get; set; }
-        public string PreferredDNS { get; set; }
-        public string AlternateDNS { get; set; }
-        public bool IsDHCP { get; set; }
-        public bool AutoDNS { get; set; }
-
+        private string _ip;
+        private string _subnetMask;
+        private string _gateway;
+        private string _preferredDNS;
+        private string _alternateDNS;
+        private bool _isDHCP;
+        private bool _autoDNS;
+        public string IP { get => _ip; set { _ip = value; Changed?.Invoke(this, null); } }
+        public string SubnetMask { get => _subnetMask; set { _subnetMask = value; Changed?.Invoke(this, null); } }
+        public string Gateway { get => _gateway; set { _gateway = value; Changed?.Invoke(this, null); } }
+        public string PreferredDNS { get => _preferredDNS; set { _preferredDNS = value; Changed?.Invoke(this, null); } }
+        public string AlternateDNS { get => _alternateDNS; set { _alternateDNS = value; Changed?.Invoke(this, null); } }
+        public bool IsDHCP { get => _isDHCP; set { _isDHCP = value; Changed?.Invoke(this, null); } }
+        public bool AutoDNS { get => _autoDNS; set { _autoDNS = value; Changed?.Invoke(this, null); } }
+        
         public void Copy(IPConfiguration other)
         {
             IP = other.IP;
